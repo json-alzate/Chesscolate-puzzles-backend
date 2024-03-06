@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  db:
+    container_name: puzzles_db
+    image: mongo:7.0.6
+    volumes:
+      - ./mongo:/data/db
+    ports:
+      - 27017:27017
+    restart: always
