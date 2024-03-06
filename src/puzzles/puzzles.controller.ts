@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
+
 import { PuzzlesService } from './puzzles.service';
 import { CreatePuzzleDto } from './dto/create-puzzle.dto';
 import { UpdatePuzzleDto } from './dto/update-puzzle.dto';
@@ -25,9 +26,27 @@ export class PuzzlesController {
     return this.puzzlesService.create(createPuzzleDto);
   }
 
-  @Get()
-  findAll() {
-    return this.puzzlesService.findAll();
+  @Get('/')
+  async getPuzzles(
+    @Query('elo', ParseIntPipe) elo: number,
+    @Query('rangeStart', ParseIntPipe) rangeStart?: number,
+    @Query('rangeEnd', ParseIntPipe) rangeEnd?: number,
+    @Query('themes') themes?: string,
+    @Query('openingFamily') openingFamily?: string,
+    @Query('openingVariation') openingVariation?: string,
+    @Query('color') color?: 'w' | 'b'
+  ) {
+    // Parsea 'themes' como un array de strings si se proporciona
+    const themesArray = themes ? themes.split(',') : undefined;
+
+    return this.puzzlesService.getPuzzles(elo, {
+      rangeStart,
+      rangeEnd,
+      themes: themesArray,
+      openingFamily,
+      openingVariation,
+      color,
+    });
   }
 
   @Get(':id')

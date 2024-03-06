@@ -38,6 +38,67 @@ export class PuzzlesService {
     return await this.puzzleModel.countDocuments();
   }
 
+  async getPuzzles(elo: number, options?: {
+    rangeStart?: number;
+    rangeEnd?: number;
+    themes?: string[];
+    openingFamily?: string;
+    openingVariation?: string;
+    color?: 'w' | 'b';
+  }): Promise<Puzzle[]> {
+    const DEFAULT_RANGE = 600;
+    let eloStart = 0;
+    let eloEnd = 3000;
+    const MAX_ATTEMPTS = 5;
+    const PUZZLES_TO_RETURN = 200;
+    let attempts = 0;
+
+    if (elo === -1) {
+      eloStart = options.rangeStart ?? 800; // Usa un valor por defecto si no se proporciona
+      eloEnd = options.rangeEnd ?? 3000; // Usa un valor por defecto si no se proporciona
+    } else {
+      eloStart = elo - (options?.rangeStart ?? DEFAULT_RANGE);
+      eloEnd = elo + (options?.rangeEnd ?? DEFAULT_RANGE);
+    }
+
+    while (attempts < MAX_ATTEMPTS && eloStart >= 800 && eloEnd <= 3000) {
+      // Construye la consulta base
+      let queryConditions = {
+        rating: { $gte: eloStart, $lte: eloEnd }
+      };
+
+      if (options?.themes && options.themes.length > 0) {
+        queryConditions['themes'] = { $in: options.themes };
+      }
+
+      if (options?.openingFamily) {
+        queryConditions['openingFamily'] = options.openingFamily;
+      }
+
+      if (options?.openingVariation) {
+        queryConditions['openingVariation'] = options.openingVariation;
+      }
+
+      // Intenta obtener los puzzles
+      const puzzles = await this.puzzleModel.find(queryConditions).limit(PUZZLES_TO_RETURN).exec();
+
+      if (puzzles.length >= PUZZLES_TO_RETURN) {
+        console.log('count ', puzzles.length, 'attempts ', attempts);
+
+        return puzzles;
+      }
+
+      // Ajusta el rango de ELO para el siguiente intento
+      eloStart = Math.max(800, eloStart - 100);
+      eloEnd = Math.min(3000, eloEnd + 100);
+      attempts++;
+    }
+
+    return []; // Devuelve un array vacío si no se encuentran puzzles después de los intentos máximos
+  }
+
+
+  // -------------------- uploadPuzzlesFromCSV --------------------
 
   async addPuzzlesFromCSV(filePath: string): Promise<void> {
     const results = [];
@@ -78,8 +139,8 @@ export class PuzzlesService {
             randomNumberQuery: this.randomNumber(),
             themes: puzzleData.Themes ? puzzleData.Themes.split(' ') : [],
             gameUrl: puzzleData.GameUrl,
-            openingFamily,
-            openingVariation
+            openingFamily: openingFamily ? openingFamily : '',
+            openingVariation: openingVariation ? openingVariation : ''
           });
 
           try {
