@@ -12,7 +12,7 @@ export class PuzzlesController {
   uploadPuzzles() {
     // Ajusta la ruta al archivo CSV según donde lo hayas ubicado en tu proyecto
     const filePath = './src/assets/puzzles_upload.csv';
-    return this.puzzlesService.addPuzzlesFromCSV(filePath);
+    // return this.puzzlesService.addPuzzlesFromCSV(filePath);
   }
 
   @Get('/count')

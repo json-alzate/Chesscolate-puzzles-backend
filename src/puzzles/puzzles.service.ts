@@ -52,20 +52,27 @@ export class PuzzlesService {
     const MAX_ATTEMPTS = 5;
     const PUZZLES_TO_RETURN = 200;
     let attempts = 0;
+    let puzzlesAccumulated: Puzzle[] = [];
 
     if (elo === -1) {
-      eloStart = options.rangeStart ?? 800; // Usa un valor por defecto si no se proporciona
-      eloEnd = options.rangeEnd ?? 3000; // Usa un valor por defecto si no se proporciona
+      eloStart = options.rangeStart ?? 800;
+      eloEnd = options.rangeEnd ?? 3000;
     } else {
       eloStart = elo - (options?.rangeStart ?? DEFAULT_RANGE);
       eloEnd = elo + (options?.rangeEnd ?? DEFAULT_RANGE);
     }
 
-    while (attempts < MAX_ATTEMPTS && eloStart >= 800 && eloEnd <= 3000) {
-      // Construye la consulta base
+    while (attempts < MAX_ATTEMPTS && puzzlesAccumulated.length < PUZZLES_TO_RETURN) {
+      const randomNumber = this.randomNumber();
+
+      // Añade el filtro de selección aleatoria a tus condiciones de consulta
       let queryConditions = {
-        rating: { $gte: eloStart, $lte: eloEnd }
+        rating: { $gte: eloStart, $lte: eloEnd },
+        randomNumberQuery: { $gte: randomNumber }, // Utiliza el número aleatorio para la selección aleatoria
+        ...(options?.color && { fen: { $regex: ` ${options.color} ` } }),
       };
+
+      console.log('randomNumberQuery', randomNumber, 'attempts', attempts, 'queryConditions', queryConditions);
 
       if (options?.themes && options.themes.length > 0) {
         queryConditions['themes'] = { $in: options.themes };
@@ -79,23 +86,29 @@ export class PuzzlesService {
         queryConditions['openingVariation'] = options.openingVariation;
       }
 
-      // Intenta obtener los puzzles
-      const puzzles = await this.puzzleModel.find(queryConditions).limit(PUZZLES_TO_RETURN).exec();
+      const puzzles = await this.puzzleModel.find(queryConditions).limit(PUZZLES_TO_RETURN - puzzlesAccumulated.length).exec();
+      puzzlesAccumulated = puzzlesAccumulated.concat(puzzles);
 
-      if (puzzles.length >= PUZZLES_TO_RETURN) {
-        console.log('count ', puzzles.length, 'attempts ', attempts);
-
-        return puzzles;
+      if (puzzlesAccumulated.length >= PUZZLES_TO_RETURN) {
+        return this.shuffleArray(puzzlesAccumulated);
       }
-
       // Ajusta el rango de ELO para el siguiente intento
-      eloStart = Math.max(800, eloStart - 100);
-      eloEnd = Math.min(3000, eloEnd + 100);
+      eloStart = Math.max(800, eloStart - 50);
+      eloEnd = Math.min(3000, eloEnd + 50);
       attempts++;
     }
 
-    return []; // Devuelve un array vacío si no se encuentran puzzles después de los intentos máximos
+    return this.shuffleArray(puzzlesAccumulated);
   }
+
+  private shuffleArray(array: Puzzle[]): Puzzle[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1)); // selecciona un índice aleatorio desde 0 hasta i
+      [array[i], array[j]] = [array[j], array[i]]; // intercambia elementos array[i] y array[j]
+    }
+    return array;
+  }
+
 
 
   // -------------------- uploadPuzzlesFromCSV --------------------
