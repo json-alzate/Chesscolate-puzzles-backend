@@ -24,7 +24,7 @@ export class PuzzlesController {
 
   @Post()
   create(@Body() createPuzzleDto: CreatePuzzleDto) {
-    return this.puzzlesService.create(createPuzzleDto);
+    // return this.puzzlesService.create(createPuzzleDto);
   }
 
   @Post('/get-puzzles')
@@ -50,11 +50,11 @@ export class PuzzlesController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePuzzleDto: UpdatePuzzleDto) {
-    return this.puzzlesService.update(+id, updatePuzzleDto);
+    // return this.puzzlesService.update(+id, updatePuzzleDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.puzzlesService.remove(+id);
+    // return this.puzzlesService.remove(+id);
   }
 }
