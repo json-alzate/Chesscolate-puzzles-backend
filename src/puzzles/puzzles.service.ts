@@ -72,7 +72,6 @@ export class PuzzlesService {
         ...(options?.color && { fen: { $regex: ` ${options.color} ` } }),
       };
 
-      console.log('randomNumberQuery', randomNumber, 'attempts', attempts, 'queryConditions', queryConditions);
 
       if (options?.themes && options.themes.length > 0) {
         queryConditions['themes'] = { $in: options.themes };
@@ -90,6 +89,8 @@ export class PuzzlesService {
       puzzlesAccumulated = puzzlesAccumulated.concat(puzzles);
 
       if (puzzlesAccumulated.length >= PUZZLES_TO_RETURN) {
+        console.log('Puzzles accumulated:', puzzlesAccumulated.length);
+
         return this.shuffleArray(puzzlesAccumulated);
       }
       // Ajusta el rango de ELO para el siguiente intento
@@ -98,6 +99,7 @@ export class PuzzlesService {
       attempts++;
     }
 
+    console.log('Puzzles accumulated:', puzzlesAccumulated.length);
     return this.shuffleArray(puzzlesAccumulated);
   }
 

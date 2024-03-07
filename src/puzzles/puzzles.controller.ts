@@ -3,6 +3,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe 
 import { PuzzlesService } from './puzzles.service';
 import { CreatePuzzleDto } from './dto/create-puzzle.dto';
 import { UpdatePuzzleDto } from './dto/update-puzzle.dto';
+import { GetPuzzlesDto } from './dto/get-puzzles.dto';
 
 @Controller('puzzles')
 export class PuzzlesController {
@@ -26,28 +27,21 @@ export class PuzzlesController {
     return this.puzzlesService.create(createPuzzleDto);
   }
 
-  @Get('/')
-  async getPuzzles(
-    @Query('elo', ParseIntPipe) elo: number,
-    @Query('rangeStart', ParseIntPipe) rangeStart?: number,
-    @Query('rangeEnd', ParseIntPipe) rangeEnd?: number,
-    @Query('themes') themes?: string,
-    @Query('openingFamily') openingFamily?: string,
-    @Query('openingVariation') openingVariation?: string,
-    @Query('color') color?: 'w' | 'b'
-  ) {
-    // Parsea 'themes' como un array de strings si se proporciona
-    const themesArray = themes ? themes.split(',') : undefined;
-
-    return this.puzzlesService.getPuzzles(elo, {
-      rangeStart,
-      rangeEnd,
-      themes: themesArray,
-      openingFamily,
-      openingVariation,
-      color,
-    });
+  @Post('/get-puzzles')
+  async getPuzzles(@Body() getPuzzlesDto: GetPuzzlesDto) {
+    return this.puzzlesService.getPuzzles(
+      getPuzzlesDto.elo,
+      {
+        rangeStart: getPuzzlesDto.rangeStart,
+        rangeEnd: getPuzzlesDto.rangeEnd,
+        themes: getPuzzlesDto.themes,
+        openingFamily: getPuzzlesDto.openingFamily,
+        openingVariation: getPuzzlesDto.openingVariation,
+        color: getPuzzlesDto.color,
+      }
+    );
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
