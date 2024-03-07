@@ -8,7 +8,10 @@ import { PuzzlesModule } from './puzzles/puzzles.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URI),
+    MongooseModule.forRoot(
+      process.env.MONGO_URI,
+      { dbName: 'puzzle-db' }
+    ),
     PuzzlesModule
   ],
   controllers: [],
