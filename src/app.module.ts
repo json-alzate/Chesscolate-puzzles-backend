@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -9,12 +9,13 @@ import { PuzzlesModule } from './puzzles/puzzles.module';
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      process.env.MONGO_URI,
-      { dbName: 'puzzle-db' }
+      process.env.MONGO_URI
     ),
     PuzzlesModule
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {
+
+}
