@@ -41,16 +41,18 @@ export class PuzzlesService {
 
     let puzzles: Puzzle[] = [];
 
+    this.writeOpeningsInFiles();
 
-    if (options?.openingFamily && options?.openingFamily.length > 0) {
-      // puzzles = await this.getPuzzlesByOpening(options.openingFamily);
-    } else {
-      // se obtienen los puzzles por tema o por defecto se obtienen los puzzles de los 3 temas principales
-      // eligiendo un tema aleatorio
-      puzzles = this.loadService.findPuzzles(
-        options.theme || this.themes[Math.floor(Math.random() * this.themes.length)],
-        elo || 1500, options.color || 'N/A', countToReturn);
-    }
+
+    // if (options?.openingFamily && options?.openingFamily.length > 0) {
+    //   // puzzles = await this.getPuzzlesByOpening(options.openingFamily);
+    // } else {
+    //   // se obtienen los puzzles por tema o por defecto se obtienen los puzzles de los 3 temas principales
+    //   // eligiendo un tema aleatorio
+    //   puzzles = this.loadService.findPuzzles(
+    //     options.theme || this.themes[Math.floor(Math.random() * this.themes.length)],
+    //     elo || 1500, options.color || 'N/A', countToReturn);
+    // }
 
     // se mezclan los puzzles
     return this.shuffleArray(puzzles).slice(0, countToReturn);
@@ -132,6 +134,51 @@ export class PuzzlesService {
 
     // Escribe o actualiza el archivo de índice
     writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
+  }
+
+  async writeOpeningsInFiles(): Promise<void> {
+
+    const openings = ["Sicilian_Defense", "French_Defense", "Queens_Pawn_Game", "Italian_Game", "Caro-Kann_Defense", "Scandinavian_Defense", "Queens_Gambit_Declined", "English_Opening", "Ruy_Lopez", "Indian_Defense", "Scotch_Game", "Russian_Game", "Philidor_Defense", "Modern_Defense", "Four_Knights_Game", "Kings_Gambit_Accepted", "Zukertort_Opening", "Bishops_Opening", "Slav_Defense", "Pirc_Defense", "Kings_Pawn_Game", "Vienna_Game", "Queens_Gambit_Accepted", "Kings_Indian_Defense", "Benoni_Defense", "Nimzowitsch_Defense", "Alekhine_Defense", "Nimzo-Larsen_Attack", "Horwitz_Defense", "Kings_Gambit_Declined", "Owen_Defense", "Bird_Opening", "Dutch_Defense", "Nimzo-Indian_Defense", "Vant_Kruijs_Opening", "Semi-Slav_Defense", "Center_Game", "Hungarian_Opening", "Englund_Gambit_Complex", "Three_Knights_Opening", "Ponziani_Opening", "Englund_Gambit", "Grunfeld_Defense", "Blackmar-Diemer_Gambit", "Elephant_Gambit", "Polish_Opening", "Danish_Gambit", "Kings_Indian_Attack", "Rat_Defense", "Kings_Gambit", "Trompowsky_Attack", "English_Defense", "Grob_Opening", "Rapport-Jobava_System", "Kings_Knight_Opening", "Van_Geet_Opening", "Tarrasch_Defense", "Old_Indian_Defense", "Danish_Gambit_Accepted", "Catalan_Opening", "Reti_Opening", "Queens_Indian_Defense", "London_System"];
+
+
+    const indexFilePath = join(__dirname, `../../puzzlesFilesOpenings/index.json`);
+    let indexData = {};
+
+    if (existsSync(indexFilePath)) {
+      indexData = JSON.parse(readFileSync(indexFilePath, 'utf8'));
+    }
+
+    for (const opening of openings) {
+      const openingPath = join(__dirname, `../../puzzlesFilesOpenings/${opening}`);
+      mkdirSync(openingPath, { recursive: true });
+
+      if (!indexData[opening]) indexData[opening] = [];
+
+      for (let eloStart = 400; eloStart <= 2800; eloStart += 20) {
+        const eloEnd = eloStart + 19;
+        const filePath = join(openingPath, `${opening}_${eloStart}_${eloEnd}.json`);
+
+        if (!existsSync(filePath)) {
+          const puzzlesDB = await this.getPuzzlesByOpeningFromDB(opening, eloStart, eloEnd);
+
+          if (puzzlesDB.length > 0) {
+            writeFileSync(filePath, JSON.stringify(puzzlesDB));
+            console.log(`Puzzles for ${opening} and ELO range: ${eloStart}-${eloEnd} saved to file: ${filePath}`, puzzlesDB.length);
+
+            // Agrega los detalles al objeto de índice
+            indexData[opening].push({ eloRange: `${eloStart}-${eloEnd}`, fileName: `${opening}_${eloStart}_${eloEnd}.json`, count: puzzlesDB.length });
+          } else {
+            console.log(`No puzzles found for ${opening} and ELO range: ${eloStart}-${eloEnd}`);
+          }
+        } else {
+          console.log(`File already exists for opening: ${opening} and ELO range: ${eloStart}-${eloEnd}, skipping save.`);
+        }
+      }
+    }
+
+    // Escribe o actualiza el archivo de índice
+    writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
+
   }
 
 
