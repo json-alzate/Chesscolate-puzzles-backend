@@ -5,6 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { PuzzlesModule } from './puzzles/puzzles.module';
 
+
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -14,6 +16,7 @@ import { PuzzlesModule } from './puzzles/puzzles.module';
     PuzzlesModule
   ],
   controllers: [],
+  exports: [],
   providers: [],
 })
 export class AppModule {

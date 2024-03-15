@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePuzzleDto } from './dto/create-puzzle.dto';
-import { UpdatePuzzleDto } from './dto/update-puzzle.dto';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'fs';
+import { join } from 'path';
 
-// src/puzzles/puzzles.service.ts
+
+import { LoadService } from './load.service';
+
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Puzzle } from './entities/puzzle.entity'; // Ajusta la importación según tu estructura
@@ -12,95 +14,47 @@ import * as csv from 'csv-parser';
 @Injectable()
 export class PuzzlesService {
 
-  constructor(@InjectModel(Puzzle.name) private puzzleModel: Model<Puzzle>) { }
+  // private redisClient = createClient({ url: process.env.REDIS_URL });
 
-  create(createPuzzleDto: CreatePuzzleDto) {
-    return 'This action adds a new puzzle';
+  private themes = ["opening", "middlegame", "endgame", "rookEndgame", "bishopEndgame", "pawnEndgame", "knightEndgame", "queenEndgame", "queenRookEndgame", "advancedPawn", "attackingF2F7", "capturingDefender", "discoveredAttack", "doubleCheck", "exposedKing", "fork", "hangingPiece", "kingsideAttack", "pin", "queensideAttack", "sacrifice", "skewer", "trappedPiece", "attraction", "clearance", "defensiveMove", "deflection", "interference", "intermezzo", "quietMove", "xRayAttack", "zugzwang", "mate", "mateIn1", "mateIn2", "mateIn3", "mateIn4", "mateIn5", "anastasiaMate", "arabianMate", "backRankMate", "bodenMate", "doubleBishopMate", "dovetailMate", "hookMate", "smotheredMate", "equality", "advantage", "crushing", "mate", "oneMove", "short", "long", "veryLong"];
+
+
+
+  constructor(@InjectModel(Puzzle.name) private puzzleModel: Model<Puzzle>,
+    private loadService: LoadService) {
   }
 
-  findAll() {
-    return `This action returns all puzzles`;
-  }
 
-  findOne(id: number) {
-    return `This action returns a #${id} puzzle`;
-  }
 
-  update(id: number, updatePuzzleDto: UpdatePuzzleDto) {
-    return `This action updates a #${id} puzzle`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} puzzle`;
-  }
-
-  async countAllPuzzles(): Promise<number> {
-    return await this.puzzleModel.countDocuments();
-  }
 
   async getPuzzles(elo: number, options?: {
-    rangeStart?: number;
-    rangeEnd?: number;
-    themes?: string[];
+    theme?: string;
     openingFamily?: string;
-    openingVariation?: string;
-    color?: 'w' | 'b';
-  }): Promise<Puzzle[]> {
-    const DEFAULT_RANGE = 600;
-    let eloStart = 0;
-    let eloEnd = 3000;
-    const MAX_ATTEMPTS = 5;
-    const PUZZLES_TO_RETURN = 200;
-    let attempts = 0;
-    let puzzlesAccumulated: Puzzle[] = [];
+    color?: 'w' | 'b' | 'N/A';
+  }, countToReturn = 200): Promise<Puzzle[]> {
 
-    if (elo === -1) {
-      eloStart = options.rangeStart ?? 800;
-      eloEnd = options.rangeEnd ?? 3000;
+    if (countToReturn > 200) {
+      countToReturn = 200;
+    }
+
+
+    let puzzles: Puzzle[] = [];
+
+
+    if (options?.openingFamily && options?.openingFamily.length > 0) {
+      // puzzles = await this.getPuzzlesByOpening(options.openingFamily);
     } else {
-      eloStart = elo - (options?.rangeStart ?? DEFAULT_RANGE);
-      eloEnd = elo + (options?.rangeEnd ?? DEFAULT_RANGE);
+      // se obtienen los puzzles por tema o por defecto se obtienen los puzzles de los 3 temas principales
+      // eligiendo un tema aleatorio
+      puzzles = this.loadService.findPuzzles(
+        options.theme || this.themes[Math.floor(Math.random() * this.themes.length)],
+        elo || 1500, options.color || 'N/A', countToReturn);
     }
 
-    while (attempts < MAX_ATTEMPTS && puzzlesAccumulated.length < PUZZLES_TO_RETURN) {
-      const randomNumber = this.randomNumber();
+    // se mezclan los puzzles
+    return this.shuffleArray(puzzles).slice(0, countToReturn);
 
-      // Añade el filtro de selección aleatoria a tus condiciones de consulta
-      let queryConditions = {
-        rating: { $gte: eloStart, $lte: eloEnd },
-        randomNumberQuery: { $gte: randomNumber }, // Utiliza el número aleatorio para la selección aleatoria
-        ...(options?.color && { fen: { $regex: ` ${options.color} ` } }),
-      };
-
-
-      if (options?.themes && options.themes.length > 0) {
-        queryConditions['themes'] = { $in: options.themes };
-      }
-
-      if (options?.openingFamily) {
-        queryConditions['openingFamily'] = options.openingFamily;
-      }
-
-      if (options?.openingVariation) {
-        queryConditions['openingVariation'] = options.openingVariation;
-      }
-
-      const puzzles = await this.puzzleModel.find(queryConditions).limit(PUZZLES_TO_RETURN - puzzlesAccumulated.length).exec();
-      puzzlesAccumulated = puzzlesAccumulated.concat(puzzles);
-
-      if (puzzlesAccumulated.length >= PUZZLES_TO_RETURN) {
-        console.log('Puzzles accumulated:', puzzlesAccumulated.length);
-
-        return this.shuffleArray(puzzlesAccumulated);
-      }
-      // Ajusta el rango de ELO para el siguiente intento
-      eloStart = Math.max(800, eloStart - 50);
-      eloEnd = Math.min(3000, eloEnd + 50);
-      attempts++;
-    }
-
-    console.log('Puzzles accumulated:', puzzlesAccumulated.length);
-    return this.shuffleArray(puzzlesAccumulated);
   }
 
   private shuffleArray(array: Puzzle[]): Puzzle[] {
@@ -111,6 +65,74 @@ export class PuzzlesService {
     return array;
   }
 
+  // -------------------- database operations --------------------
+
+  async countAllPuzzles(): Promise<number> {
+    return await this.puzzleModel.countDocuments();
+  }
+
+
+  async getPuzzlesByThemeFromDB(theme: string, eloStart, eloEnd): Promise<Puzzle[]> {
+    return await this.puzzleModel.find({
+      themes: theme,
+      rating: { $gte: eloStart, $lte: eloEnd }
+    }).exec();
+  }
+
+
+  async getPuzzlesByOpeningFromDB(opening: string, eloStart, eloEnd): Promise<Puzzle[]> {
+    return await this.puzzleModel.find({
+      openingFamily: opening,
+      rating: { $gte: eloStart, $lte: eloEnd }
+    }).exec();
+  }
+
+
+  // -------------------- write files --------------------
+
+  async writeThemesInFiles(): Promise<void> {
+
+    const themes = ["opening", "middlegame", "endgame", "rookEndgame", "bishopEndgame", "pawnEndgame", "knightEndgame", "queenEndgame", "queenRookEndgame", "advancedPawn", "attackingF2F7", "capturingDefender", "discoveredAttack", "doubleCheck", "exposedKing", "fork", "hangingPiece", "kingsideAttack", "pin", "queensideAttack", "sacrifice", "skewer", "trappedPiece", "attraction", "clearance", "defensiveMove", "deflection", "interference", "intermezzo", "quietMove", "xRayAttack", "zugzwang", "mate", "mateIn1", "mateIn2", "mateIn3", "mateIn4", "mateIn5", "anastasiaMate", "arabianMate", "backRankMate", "bodenMate", "doubleBishopMate", "dovetailMate", "hookMate", "smotheredMate", "equality", "advantage", "crushing", "mate", "oneMove", "short", "long", "veryLong"];
+
+
+    const indexFilePath = join(__dirname, `../../puzzlesFilesThemes/index.json`);
+    let indexData = {};
+
+    if (existsSync(indexFilePath)) {
+      indexData = JSON.parse(readFileSync(indexFilePath, 'utf8'));
+    }
+
+    for (const theme of themes) {
+      const themePath = join(__dirname, `../../puzzlesFilesThemes/${theme}`);
+      mkdirSync(themePath, { recursive: true });
+
+      if (!indexData[theme]) indexData[theme] = [];
+
+      for (let eloStart = 400; eloStart <= 2800; eloStart += 20) {
+        const eloEnd = eloStart + 19;
+        const filePath = join(themePath, `${theme}_${eloStart}_${eloEnd}.json`);
+
+        if (!existsSync(filePath)) {
+          const puzzlesDB = await this.getPuzzlesByThemeFromDB(theme, eloStart, eloEnd);
+
+          if (puzzlesDB.length > 0) {
+            writeFileSync(filePath, JSON.stringify(puzzlesDB));
+            console.log(`Puzzles for ${theme} and ELO range: ${eloStart}-${eloEnd} saved to file: ${filePath}`, puzzlesDB.length);
+
+            // Agrega los detalles al objeto de índice
+            indexData[theme].push({ eloRange: `${eloStart}-${eloEnd}`, fileName: `${theme}_${eloStart}_${eloEnd}.json`, count: puzzlesDB.length });
+          } else {
+            console.log(`No puzzles found for ${theme} and ELO range: ${eloStart}-${eloEnd}`);
+          }
+        } else {
+          console.log(`File already exists for theme: ${theme} and ELO range: ${eloStart}-${eloEnd}, skipping save.`);
+        }
+      }
+    }
+
+    // Escribe o actualiza el archivo de índice
+    writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
+  }
 
 
   // -------------------- uploadPuzzlesFromCSV --------------------

@@ -27,8 +27,8 @@ export class Puzzle extends Document {
     @Prop({ default: 0 })
     nbPlays: number;
 
-    @Prop({ type: [String], default: [] })
-    themes: string[];
+    @Prop({ default: '' })
+    theme: string;
 
     @Prop({ default: '' })
     gameUrl: string;
