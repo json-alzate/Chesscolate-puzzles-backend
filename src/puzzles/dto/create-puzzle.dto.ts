@@ -17,8 +17,8 @@ export class CreatePuzzleDto {
     randomNumberQuery: number;
     @IsNumber()
     nbPlays: number;
-    @IsArray()
-    themes: string[];
+    @IsString()
+    theme: string;
     @IsString()
     gameUrl: string;
     @IsString()

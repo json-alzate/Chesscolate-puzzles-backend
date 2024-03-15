@@ -11,5 +11,8 @@ async function bootstrap() {
   }));
   app.enableCors();
   await app.listen(process.env.PORT || 3000);
+
+  const url = await app.getUrl();
+  // console.log(`Aplicación corriendo en: ${url}`);
 }
 bootstrap();

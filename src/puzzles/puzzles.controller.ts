@@ -32,29 +32,14 @@ export class PuzzlesController {
     return this.puzzlesService.getPuzzles(
       getPuzzlesDto.elo,
       {
-        rangeStart: getPuzzlesDto.rangeStart,
-        rangeEnd: getPuzzlesDto.rangeEnd,
-        themes: getPuzzlesDto.themes,
+        theme: getPuzzlesDto.theme,
         openingFamily: getPuzzlesDto.openingFamily,
-        openingVariation: getPuzzlesDto.openingVariation,
         color: getPuzzlesDto.color,
-      }
+      },
+      getPuzzlesDto.countToReturn
     );
   }
 
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.puzzlesService.findOne(+id);
-  }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePuzzleDto: UpdatePuzzleDto) {
-    // return this.puzzlesService.update(+id, updatePuzzleDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    // return this.puzzlesService.remove(+id);
-  }
 }

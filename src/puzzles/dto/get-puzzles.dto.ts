@@ -4,31 +4,21 @@ export class GetPuzzlesDto {
     @IsInt()
     elo: number;
 
-    @IsInt()
-    @Min(800)
-    @IsOptional()
-    rangeStart?: number;
 
-    @IsInt()
-    @Max(3000)
+    @IsString()
     @IsOptional()
-    rangeEnd?: number;
-
-    @IsArray()
-    @IsString({ each: true })
-    @IsOptional()
-    themes?: string[];
+    theme?: string;
 
     @IsString()
     @IsOptional()
     openingFamily?: string;
 
-    @IsString()
-    @IsOptional()
-    openingVariation?: string;
 
     @IsString()
-    @IsIn(['w', 'b'])
+    @IsIn(['w', 'b', 'N/A'])
     @IsOptional()
-    color?: 'w' | 'b';
+    color?: 'w' | 'b' | 'N/A';
+
+    @IsOptional()
+    countToReturn?: number;
 }
