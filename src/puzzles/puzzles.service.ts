@@ -41,18 +41,18 @@ export class PuzzlesService {
 
     let puzzles: Puzzle[] = [];
 
-    this.writeOpeningsInFiles();
 
-
-    // if (options?.openingFamily && options?.openingFamily.length > 0) {
-    //   // puzzles = await this.getPuzzlesByOpening(options.openingFamily);
-    // } else {
-    //   // se obtienen los puzzles por tema o por defecto se obtienen los puzzles de los 3 temas principales
-    //   // eligiendo un tema aleatorio
-    //   puzzles = this.loadService.findPuzzles(
-    //     options.theme || this.themes[Math.floor(Math.random() * this.themes.length)],
-    //     elo || 1500, options.color || 'N/A', countToReturn);
-    // }
+    if (options?.openingFamily && options?.openingFamily.length > 0) {
+      puzzles = await this.loadService.findPuzzlesByOpening(
+        options.openingFamily,
+        elo || 1500, options.color || 'N/A', countToReturn);
+    } else {
+      // se obtienen los puzzles por tema o por defecto se obtienen los puzzles de los 3 temas principales
+      // eligiendo un tema aleatorio
+      puzzles = this.loadService.findPuzzlesByTheme(
+        options.theme || this.themes[Math.floor(Math.random() * this.themes.length)],
+        elo || 1500, options.color || 'N/A', countToReturn);
+    }
 
     // se mezclan los puzzles
     return this.shuffleArray(puzzles).slice(0, countToReturn);
