@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { MongooseModule } from '@nestjs/mongoose';
+// import { MongooseModule } from '@nestjs/mongoose';
 
 import { LoadService } from './load.service';
 import { PuzzlesService } from './puzzles.service';
@@ -12,12 +12,12 @@ import { PuzzleSchema } from './entities/puzzle.entity';
   controllers: [PuzzlesController],
   providers: [LoadService, PuzzlesService],
   imports: [
-    MongooseModule.forFeature([
-      {
-        name: 'Puzzle',
-        schema: PuzzleSchema
-      }
-    ])
+    // MongooseModule.forFeature([
+    //   {
+    //     name: 'Puzzle',
+    //     schema: PuzzleSchema
+    //   }
+    // ])
   ]
 })
 export class PuzzlesModule { }

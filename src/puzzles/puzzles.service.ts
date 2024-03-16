@@ -5,9 +5,9 @@ import { join } from 'path';
 
 import { LoadService } from './load.service';
 
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Puzzle } from './entities/puzzle.entity'; // Ajusta la importación según tu estructura
+// import { InjectModel } from '@nestjs/mongoose';
+// import { Model } from 'mongoose';
+import { Puzzle } from './entities/puzzle.entity';
 import * as fs from 'fs';
 import * as csv from 'csv-parser';
 
@@ -20,7 +20,8 @@ export class PuzzlesService {
 
 
 
-  constructor(@InjectModel(Puzzle.name) private puzzleModel: Model<Puzzle>,
+  constructor(
+    // @InjectModel(Puzzle.name) private puzzleModel: Model<Puzzle>,
     private loadService: LoadService) {
   }
 
@@ -70,23 +71,26 @@ export class PuzzlesService {
   // -------------------- database operations --------------------
 
   async countAllPuzzles(): Promise<number> {
-    return await this.puzzleModel.countDocuments();
+    return 0;
+    // return await this.puzzleModel.countDocuments();
   }
 
 
   async getPuzzlesByThemeFromDB(theme: string, eloStart, eloEnd): Promise<Puzzle[]> {
-    return await this.puzzleModel.find({
-      themes: theme,
-      rating: { $gte: eloStart, $lte: eloEnd }
-    }).exec();
+    return [];
+    // return await this.puzzleModel.find({
+    //   themes: theme,
+    //   rating: { $gte: eloStart, $lte: eloEnd }
+    // }).exec();
   }
 
 
   async getPuzzlesByOpeningFromDB(opening: string, eloStart, eloEnd): Promise<Puzzle[]> {
-    return await this.puzzleModel.find({
-      openingFamily: opening,
-      rating: { $gte: eloStart, $lte: eloEnd }
-    }).exec();
+    return [];
+    // return await this.puzzleModel.find({
+    //   openingFamily: opening,
+    //   rating: { $gte: eloStart, $lte: eloEnd }
+    // }).exec();
   }
 
 
@@ -184,58 +188,58 @@ export class PuzzlesService {
 
   // -------------------- uploadPuzzlesFromCSV --------------------
 
-  async addPuzzlesFromCSV(filePath: string): Promise<void> {
-    const results = [];
+  // async addPuzzlesFromCSV(filePath: string): Promise<void> {
+  //   const results = [];
 
-    fs.createReadStream(filePath)
-      .pipe(csv())
-      .on('data', (data) => results.push(data))
-      .on('end', async () => {
+  //   fs.createReadStream(filePath)
+  //     .pipe(csv())
+  //     .on('data', (data) => results.push(data))
+  //     .on('end', async () => {
 
 
 
-        for (const puzzleData of results) {
+  //       for (const puzzleData of results) {
 
-          // Divide el campo OpeningTags por espacios para obtener un array de tags
-          const openingTags = puzzleData.OpeningTags ? puzzleData.OpeningTags.split(' ') : [];
+  //         // Divide el campo OpeningTags por espacios para obtener un array de tags
+  //         const openingTags = puzzleData.OpeningTags ? puzzleData.OpeningTags.split(' ') : [];
 
-          let openingFamily = '';
-          let openingVariation = '';
+  //         let openingFamily = '';
+  //         let openingVariation = '';
 
-          if (openingTags.length > 0) {
-            // Asigna el primer tag a openingFamily
-            openingFamily = openingTags[0];
+  //         if (openingTags.length > 0) {
+  //           // Asigna el primer tag a openingFamily
+  //           openingFamily = openingTags[0];
 
-            // Si hay más tags, toma el segundo para openingVariation
-            if (openingTags.length > 1) {
-              openingVariation = openingTags[1];
-            }
-          }
+  //           // Si hay más tags, toma el segundo para openingVariation
+  //           if (openingTags.length > 1) {
+  //             openingVariation = openingTags[1];
+  //           }
+  //         }
 
-          const puzzleToAdd = new this.puzzleModel({
-            uid: puzzleData.PuzzleId,
-            fen: puzzleData.FEN,
-            moves: puzzleData.Moves,
-            rating: Number(puzzleData.Rating),
-            ratingDeviation: Number(puzzleData.RatingDeviation),
-            popularity: Number(puzzleData.Popularity),
-            nbPlays: Number(puzzleData.NbPlays),
-            randomNumberQuery: this.randomNumber(),
-            themes: puzzleData.Themes ? puzzleData.Themes.split(' ') : [],
-            gameUrl: puzzleData.GameUrl,
-            openingFamily: openingFamily ? openingFamily : '',
-            openingVariation: openingVariation ? openingVariation : ''
-          });
+  //         const puzzleToAdd = new this.puzzleModel({
+  //           uid: puzzleData.PuzzleId,
+  //           fen: puzzleData.FEN,
+  //           moves: puzzleData.Moves,
+  //           rating: Number(puzzleData.Rating),
+  //           ratingDeviation: Number(puzzleData.RatingDeviation),
+  //           popularity: Number(puzzleData.Popularity),
+  //           nbPlays: Number(puzzleData.NbPlays),
+  //           randomNumberQuery: this.randomNumber(),
+  //           themes: puzzleData.Themes ? puzzleData.Themes.split(' ') : [],
+  //           gameUrl: puzzleData.GameUrl,
+  //           openingFamily: openingFamily ? openingFamily : '',
+  //           openingVariation: openingVariation ? openingVariation : ''
+  //         });
 
-          try {
-            await puzzleToAdd.save();
-          } catch (error) {
-            console.error('Error saving puzzle to MongoDB', error);
-          }
-        }
-        console.log('All puzzles have been successfully added to the database.');
-      });
-  }
+  //         try {
+  //           await puzzleToAdd.save();
+  //         } catch (error) {
+  //           console.error('Error saving puzzle to MongoDB', error);
+  //         }
+  //       }
+  //       console.log('All puzzles have been successfully added to the database.');
+  //     });
+  // }
 
   // Función para generar un número aleatorio
   randomNumber(): number {
