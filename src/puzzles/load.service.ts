@@ -18,8 +18,8 @@ export class LoadService implements OnModuleInit {
     private puzzleOpeningsCache = new Map<string, any[]>(); // Añade caché para puzzles
 
     async onModuleInit() {
-        await this.loadPuzzlesThemesIndex();
-        await this.loadPuzzlesOpeningIndex();
+        // await this.loadPuzzlesThemesIndex();
+        // await this.loadPuzzlesOpeningIndex();
     }
 
     async loadPuzzlesThemesIndex() {
