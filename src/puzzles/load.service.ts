@@ -46,10 +46,10 @@ export class LoadService implements OnModuleInit {
 
 
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesThemes/index.json');
-        if (process.env.PUZZLES_PATH) {
-            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesThemes/index.json');
+        // if (process.env.PUZZLES_PATH) {
+        //     indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesThemes/index.json');
 
-        }
+        // }
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
             this.puzzlesIndex.set(theme, indexData[theme]);
@@ -59,9 +59,9 @@ export class LoadService implements OnModuleInit {
     async loadPuzzlesOpeningIndex() {
 
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesOpenings/index.json');
-        if (process.env.PUZZLES_PATH) {
-            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesOpenings/index.json');
-        }
+        // if (process.env.PUZZLES_PATH) {
+        //     indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesOpenings/index.json');
+        // }
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
             this.puzzlesIndex.set(theme, indexData[theme]);
