@@ -23,7 +23,12 @@ export class LoadService implements OnModuleInit {
     }
 
     async loadPuzzlesThemesIndex() {
-        const indexPath = join(__dirname, '..', 'assets/themes_index.json');
+
+        let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesThemes/index.json');
+        if (process.env.PUZZLES_PATH) {
+            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesThemes/index.json');
+
+        }
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
             this.puzzlesIndex.set(theme, indexData[theme]);
@@ -31,7 +36,11 @@ export class LoadService implements OnModuleInit {
     }
 
     async loadPuzzlesOpeningIndex() {
-        const indexPath = join(__dirname, '..', 'assets/openings_index.json');
+
+        let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesOpenings/index.json');
+        if (process.env.PUZZLES_PATH) {
+            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesOpenings/index.json');
+        }
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
             this.puzzlesIndex.set(theme, indexData[theme]);
@@ -123,7 +132,10 @@ export class LoadService implements OnModuleInit {
         if (this.puzzleThemesCache.has(cacheKey)) {
             puzzlesData = this.puzzleThemesCache.get(cacheKey);
         } else {
-            const puzzlesPath = join(__dirname, '..', `assets/puzzlesFilesThemes/${theme}/${info.fileName}`);
+            let puzzlesPath = join(__dirname, '../../puzzlesfiles', `/puzzlesFilesThemes/${theme}/${info.fileName}`);
+            if (process.env.PUZZLES_PATH) {
+                puzzlesPath = join(process.env.PUZZLES_PATH, `/puzzlesFilesThemes/${theme}/${info.fileName}`);
+            }
             puzzlesData = JSON.parse(readFileSync(puzzlesPath, 'utf8'));
             this.puzzleThemesCache.set(cacheKey, puzzlesData); // Carga perezosa y almacenamiento en caché
         }
@@ -138,7 +150,10 @@ export class LoadService implements OnModuleInit {
         if (this.puzzleOpeningsCache.has(cacheKey)) {
             puzzlesData = this.puzzleOpeningsCache.get(cacheKey);
         } else {
-            const puzzlesPath = join(__dirname, '..', `assets/puzzlesFilesOpenings/${opening}/${info.fileName}`);
+            let puzzlesPath = join(__dirname, '../../puzzlesfiles', `/puzzlesFilesOpenings/${opening}/${info.fileName}`);
+            if (process.env.PUZZLES_PATH) {
+                puzzlesPath = join(process.env.PUZZLES_PATH, `/puzzlesFilesOpenings/${opening}/${info.fileName}`);
+            }
             puzzlesData = JSON.parse(readFileSync(puzzlesPath, 'utf8'));
             this.puzzleOpeningsCache.set(cacheKey, puzzlesData); // Carga perezosa y almacenamiento en caché
         }
