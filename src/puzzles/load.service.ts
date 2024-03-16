@@ -23,7 +23,7 @@ export class LoadService implements OnModuleInit {
     }
 
     async loadPuzzlesThemesIndex() {
-        const indexPath = join(__dirname, '..', 'assets/puzzlesFilesThemes/index.json');
+        const indexPath = join(__dirname, '..', 'assets/themes_index.json');
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
             this.puzzlesIndex.set(theme, indexData[theme]);
@@ -31,7 +31,7 @@ export class LoadService implements OnModuleInit {
     }
 
     async loadPuzzlesOpeningIndex() {
-        const indexPath = join(__dirname, '..', 'assets/puzzlesFilesOpenings/index.json');
+        const indexPath = join(__dirname, '..', 'assets/openings_index.json');
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
             this.puzzlesIndex.set(theme, indexData[theme]);
