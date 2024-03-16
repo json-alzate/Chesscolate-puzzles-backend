@@ -18,22 +18,6 @@ export class LoadService implements OnModuleInit {
     private puzzleOpeningsCache = new Map<string, any[]>(); // Añade caché para puzzles
 
     async onModuleInit() {
-
-        const indexPath = join(__dirname, process.env.PUZZLES_PATH, 'puzzlesFilesThemes/index.json');
-        console.log(`La ruta completa hacia index.json es: ${indexPath}`);
-
-        // Intenta leer el archivo para verificar accesibilidad
-        const dirPath = join(__dirname, process.env.PUZZLES_PATH);
-
-        readdir(dirPath, (err, files) => {
-            if (err) {
-                console.error(`Error al listar los archivos en: ${dirPath}`, err);
-                return;
-            }
-            console.log(`Archivos en ${dirPath}:`, files);
-        });
-
-
         await this.loadPuzzlesThemesIndex();
         await this.loadPuzzlesOpeningIndex();
     }
@@ -46,10 +30,10 @@ export class LoadService implements OnModuleInit {
 
 
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesThemes/index.json');
-        // if (process.env.PUZZLES_PATH) {
-        //     indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesThemes/index.json');
+        if (process.env.PUZZLES_PATH) {
+            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesThemes/index.json');
 
-        // }
+        }
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
             this.puzzlesIndex.set(theme, indexData[theme]);
@@ -59,9 +43,9 @@ export class LoadService implements OnModuleInit {
     async loadPuzzlesOpeningIndex() {
 
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesOpenings/index.json');
-        // if (process.env.PUZZLES_PATH) {
-        //     indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesOpenings/index.json');
-        // }
+        if (process.env.PUZZLES_PATH) {
+            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesOpenings/index.json');
+        }
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
             this.puzzlesIndex.set(theme, indexData[theme]);
