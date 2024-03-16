@@ -24,6 +24,11 @@ export class LoadService implements OnModuleInit {
 
     async loadPuzzlesThemesIndex() {
 
+        console.log('__dirname', __dirname);
+        console.log('process.env.PUZZLES_PATH', process.env.PUZZLES_PATH);
+
+
+
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesThemes/index.json');
         if (process.env.PUZZLES_PATH) {
             indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesThemes/index.json');
