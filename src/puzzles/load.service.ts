@@ -18,8 +18,16 @@ export class LoadService implements OnModuleInit {
     private puzzleOpeningsCache = new Map<string, any[]>(); // Añade caché para puzzles
 
     async onModuleInit() {
-        await this.loadPuzzlesThemesIndex();
-        await this.loadPuzzlesOpeningIndex();
+        const dirPath = '/';
+        readdir(dirPath, (err, files) => {
+            if (err) {
+                console.error(`Error al listar los archivos en: ${dirPath}`, err);
+                return;
+            }
+            console.log(`Archivos en ${dirPath}:`, files);
+        });
+        // await this.loadPuzzlesThemesIndex();
+        // await this.loadPuzzlesOpeningIndex();
     }
 
     async loadPuzzlesThemesIndex() {
