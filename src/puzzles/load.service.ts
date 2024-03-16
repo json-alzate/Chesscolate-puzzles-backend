@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { readFileSync } from 'fs';
+import { readFileSync, readdir } from 'fs';
 import { join } from 'path';
 
 import { Puzzle } from './entities/puzzle.entity'; // Ajusta la importación según tu estructura
@@ -18,6 +18,22 @@ export class LoadService implements OnModuleInit {
     private puzzleOpeningsCache = new Map<string, any[]>(); // Añade caché para puzzles
 
     async onModuleInit() {
+
+        const indexPath = join(__dirname, process.env.PUZZLES_PATH, 'puzzlesFilesThemes/index.json');
+        console.log(`La ruta completa hacia index.json es: ${indexPath}`);
+
+        // Intenta leer el archivo para verificar accesibilidad
+        const dirPath = join(__dirname, process.env.PUZZLES_PATH);
+
+        readdir(dirPath, (err, files) => {
+            if (err) {
+                console.error(`Error al listar los archivos en: ${dirPath}`, err);
+                return;
+            }
+            console.log(`Archivos en ${dirPath}:`, files);
+        });
+
+
         await this.loadPuzzlesThemesIndex();
         await this.loadPuzzlesOpeningIndex();
     }
