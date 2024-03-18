@@ -35,7 +35,7 @@ export class LoadService implements OnModuleInit {
 
 
         // listar archivos en un directorio
-        const dirPath = '/puzzlesdata/storage/';
+        const dirPath = '/puzzlesdata/storage/puzzlesFilesThemes/';
         readdir(dirPath, (err, files) => {
             if (err) {
                 console.error(`Error al listar los archivos en: ${dirPath}`, err);
@@ -44,8 +44,8 @@ export class LoadService implements OnModuleInit {
             console.log(`Archivos en ${dirPath}:`, files);
         });
 
-        // await this.loadPuzzlesThemesIndex();
-        // await this.loadPuzzlesOpeningIndex();
+        await this.loadPuzzlesThemesIndex();
+        await this.loadPuzzlesOpeningIndex();
 
     }
 
