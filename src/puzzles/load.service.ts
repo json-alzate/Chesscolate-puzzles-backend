@@ -1,8 +1,11 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { readFileSync, readdir } from 'fs';
+import { readFileSync, readdir, createReadStream } from 'fs';
 import { join } from 'path';
 
-import { Puzzle } from './entities/puzzle.entity'; // Ajusta la importación según tu estructura
+import { Puzzle } from './entities/puzzle.entity';
+
+import * as unzipper from 'unzipper';
+
 
 
 interface PuzzleInfo {
@@ -18,6 +21,17 @@ export class LoadService implements OnModuleInit {
     private puzzleOpeningsCache = new Map<string, any[]>(); // Añade caché para puzzles
 
     async onModuleInit() {
+        // Ruta del archivo .zip
+        const zipFilePath = join(__dirname, '../assets/puzzles_folder.zip');
+        // Directorio donde descomprimir
+        const extractPath = join(__dirname, '/puzzlesdata');
+        console.log('__dirname', __dirname);
+        createReadStream(zipFilePath)
+            .pipe(unzipper.Extract({ path: extractPath }))
+            .on('finish', () => console.log('Descompresión completada.'))
+            .on('error', (err) => console.error('Error al descomprimir:', err));
+
+
         // const dirPath = '/puzzlesfiles/puzzles/';
         // readdir(dirPath, (err, files) => {
         //     if (err) {
