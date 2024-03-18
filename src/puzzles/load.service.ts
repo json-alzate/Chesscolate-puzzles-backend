@@ -73,10 +73,12 @@ export class LoadService implements OnModuleInit {
         if (process.env.PUZZLES_PATH) {
             indexPath = join('/puzzlesdata/storage/puzzlesFilesOpenings/index.json');
         }
-        const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
-        for (const theme in indexData) {
-            this.puzzlesIndex.set(theme, indexData[theme]);
-        }
+        console.log(readFileSync(indexPath, 'utf8'));
+
+        // const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
+        // for (const theme in indexData) {
+        //     this.puzzlesIndex.set(theme, indexData[theme]);
+        // }
     }
 
     findPuzzlesByTheme(theme: string, elo: number, color: 'w' | 'b' | 'N/A', totalPuzzlesNeeded: number = 200): Puzzle[] {
