@@ -45,7 +45,7 @@ export class LoadService implements OnModuleInit {
         // });
 
         await this.loadPuzzlesThemesIndex();
-        await this.loadPuzzlesOpeningIndex();
+        // await this.loadPuzzlesOpeningIndex();
 
     }
 
