@@ -25,7 +25,7 @@ export class LoadService implements OnModuleInit {
         const zipFilePath = join(__dirname, '/puzzlesdata');
         // Directorio donde descomprimir
         const extractPath = join(__dirname, '/puzzlesdata');
-        console.log('__dirname', __dirname);
+        console.log('__dirname v2', __dirname);
         createReadStream(zipFilePath)
             .pipe(unzipper.Extract({ path: extractPath }))
             .on('finish', () => console.log('Descompresión completada.'))
