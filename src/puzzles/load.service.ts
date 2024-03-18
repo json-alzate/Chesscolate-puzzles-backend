@@ -44,8 +44,8 @@ export class LoadService implements OnModuleInit {
             console.log(`Archivos en ${dirPath}:`, files);
         });
 
-        await this.loadPuzzlesThemesIndex();
-        await this.loadPuzzlesOpeningIndex();
+        // await this.loadPuzzlesThemesIndex();
+        // await this.loadPuzzlesOpeningIndex();
 
     }
 
