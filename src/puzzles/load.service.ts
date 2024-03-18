@@ -21,25 +21,25 @@ export class LoadService implements OnModuleInit {
     private puzzleOpeningsCache = new Map<string, any[]>(); // Añade caché para puzzles
 
     async onModuleInit() {
-        // Ruta del archivo .zip
-        const zipFilePath = join('/puzzlesdata/puzzles_folder.zip');
-        // Directorio donde descomprimir
-        const extractPath = join('/puzzlesdata');
-        console.log('__dirname v2 fix', zipFilePath, extractPath);
-        createReadStream(zipFilePath)
-            .pipe(unzipper.Extract({ path: extractPath }))
-            .on('finish', () => console.log('Descompresión completada.'))
-            .on('error', (err) => console.error('Error al descomprimir:', err));
+        // // Ruta del archivo .zip
+        // const zipFilePath = join('/puzzlesdata/puzzles_folder.zip');
+        // // Directorio donde descomprimir
+        // const extractPath = join('/puzzlesdata');
+        // console.log('__dirname v2 fix', zipFilePath, extractPath);
+        // createReadStream(zipFilePath)
+        //     .pipe(unzipper.Extract({ path: extractPath }))
+        //     .on('finish', () => console.log('Descompresión completada.'))
+        //     .on('error', (err) => console.error('Error al descomprimir:', err));
 
 
-        // const dirPath = '/puzzlesfiles/puzzles/';
-        // readdir(dirPath, (err, files) => {
-        //     if (err) {
-        //         console.error(`Error al listar los archivos en: ${dirPath}`, err);
-        //         return;
-        //     }
-        //     console.log(`Archivos en ${dirPath}:`, files);
-        // });
+        const dirPath = '/puzzlesdata';
+        readdir(dirPath, (err, files) => {
+            if (err) {
+                console.error(`Error al listar los archivos en: ${dirPath}`, err);
+                return;
+            }
+            console.log(`Archivos en ${dirPath}:`, files);
+        });
         // // await this.loadPuzzlesThemesIndex();
         // await this.loadPuzzlesOpeningIndex();
     }
