@@ -22,7 +22,7 @@ export class LoadService implements OnModuleInit {
 
     async onModuleInit() {
         // Ruta del archivo .zip
-        const zipFilePath = join(__dirname, '../assets/puzzles_folder.zip');
+        const zipFilePath = join(__dirname, '/puzzlesdata');
         // Directorio donde descomprimir
         const extractPath = join(__dirname, '/puzzlesdata');
         console.log('__dirname', __dirname);
