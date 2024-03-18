@@ -21,17 +21,20 @@ export class LoadService implements OnModuleInit {
     private puzzleOpeningsCache = new Map<string, any[]>(); // Añade caché para puzzles
 
     async onModuleInit() {
-        // Ruta del archivo .zip
-        const zipFilePath = join('/puzzlesdata/storage/puzzles_folder.zip');
-        // Directorio donde descomprimir
-        const extractPath = join('/puzzlesdata/storage/');
-        console.log('__dirname v2 fix', zipFilePath, extractPath);
-        createReadStream(zipFilePath)
-            .pipe(unzipper.Extract({ path: extractPath }))
-            .on('finish', () => console.log('Descompresión completada.'))
-            .on('error', (err) => console.error('Error al descomprimir:', err));
+
+        // // descomprimir zip de puzzles
+        // // Ruta del archivo .zip
+        // const zipFilePath = join('/puzzlesdata/storage/puzzles_folder.zip');
+        // // Directorio donde descomprimir
+        // const extractPath = join('/puzzlesdata/storage/');
+        // console.log('__dirname v2 fix', zipFilePath, extractPath);
+        // createReadStream(zipFilePath)
+        //     .pipe(unzipper.Extract({ path: extractPath }))
+        //     .on('finish', () => console.log('Descompresión completada.'))
+        //     .on('error', (err) => console.error('Error al descomprimir:', err));
 
 
+        // listar archivos en un directorio
         // const dirPath = '/puzzlesdata';
         // readdir(dirPath, (err, files) => {
         //     if (err) {
@@ -41,16 +44,9 @@ export class LoadService implements OnModuleInit {
         //     console.log(`Archivos en ${dirPath}:`, files);
         // });
 
-        // const dirPath2 = '/puzzlesdata/storage';
-        // readdir(dirPath2, (err, files) => {
-        //     if (err) {
-        //         console.error(`Error al listar los archivos en: ${dirPath2}`, err);
-        //         return;
-        //     }
-        //     console.log(`Archivos en ${dirPath2}:`, files);
-        // });
-        // // await this.loadPuzzlesThemesIndex();
-        // await this.loadPuzzlesOpeningIndex();
+        await this.loadPuzzlesThemesIndex();
+        await this.loadPuzzlesOpeningIndex();
+
     }
 
     async loadPuzzlesThemesIndex() {
