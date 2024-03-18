@@ -35,17 +35,17 @@ export class LoadService implements OnModuleInit {
 
 
         // listar archivos en un directorio
-        const dirPath = '/puzzlesdata/storage/puzzlesFilesThemes/';
-        readdir(dirPath, (err, files) => {
-            if (err) {
-                console.error(`Error al listar los archivos en: ${dirPath}`, err);
-                return;
-            }
-            console.log(`Archivos en ${dirPath}:`, files);
-        });
+        // const dirPath = '/puzzlesdata/storage/puzzlesFilesThemes/';
+        // readdir(dirPath, (err, files) => {
+        //     if (err) {
+        //         console.error(`Error al listar los archivos en: ${dirPath}`, err);
+        //         return;
+        //     }
+        //     console.log(`Archivos en ${dirPath}:`, files);
+        // });
 
-        // await this.loadPuzzlesThemesIndex();
-        // await this.loadPuzzlesOpeningIndex();
+        await this.loadPuzzlesThemesIndex();
+        await this.loadPuzzlesOpeningIndex();
 
     }
 
@@ -58,8 +58,7 @@ export class LoadService implements OnModuleInit {
 
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesThemes/index.json');
         if (process.env.PUZZLES_PATH) {
-            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesThemes/index.json');
-
+            indexPath = join('/puzzlesdata/storage/puzzlesFilesThemes/index.json');
         }
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
@@ -71,7 +70,7 @@ export class LoadService implements OnModuleInit {
 
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesOpenings/index.json');
         if (process.env.PUZZLES_PATH) {
-            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesOpenings/index.json');
+            indexPath = join('/puzzlesdata/storage/puzzlesFilesOpenings/index.json');
         }
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
