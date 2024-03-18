@@ -32,7 +32,7 @@ export class LoadService implements OnModuleInit {
         //     .on('error', (err) => console.error('Error al descomprimir:', err));
 
 
-        const dirPath = '/puzzlesdata';
+        const dirPath = '/';
         readdir(dirPath, (err, files) => {
             if (err) {
                 console.error(`Error al listar los archivos en: ${dirPath}`, err);
