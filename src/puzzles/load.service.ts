@@ -44,27 +44,21 @@ export class LoadService implements OnModuleInit {
         //     console.log(`Archivos en ${dirPath}:`, files);
         // });
 
-        // await this.loadPuzzlesThemesIndex();
+        await this.loadPuzzlesThemesIndex();
         await this.loadPuzzlesOpeningIndex();
 
     }
 
     async loadPuzzlesThemesIndex() {
 
-        console.log('__dirname', __dirname);
-        console.log('process.env.PUZZLES_PATH', process.env.PUZZLES_PATH);
-
-
-
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesThemes/index.json');
         if (process.env.PUZZLES_PATH) {
             indexPath = join('/puzzlesdata/storage/puzzlesFilesThemes/index.json');
         }
-        console.log(readFileSync(indexPath, 'utf8'));
-        // const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
-        // for (const theme in indexData) {
-        //     this.puzzlesIndex.set(theme, indexData[theme]);
-        // }
+        const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
+        for (const theme in indexData) {
+            this.puzzlesIndex.set(theme, indexData[theme]);
+        }
     }
 
     async loadPuzzlesOpeningIndex() {
@@ -73,10 +67,8 @@ export class LoadService implements OnModuleInit {
         if (process.env.PUZZLES_PATH) {
             indexPath = join('/puzzlesdata/storage/puzzlesFilesOpenings/index.json');
         }
-        // console.log(readFileSync(indexPath, 'utf8'));
 
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
-        console.log('indexData ', indexData.length);
         for (const theme in indexData) {
             this.puzzlesIndex.set(theme, indexData[theme]);
         }
