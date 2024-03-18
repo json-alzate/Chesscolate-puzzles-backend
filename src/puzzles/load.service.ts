@@ -75,8 +75,8 @@ export class LoadService implements OnModuleInit {
         }
         // console.log(readFileSync(indexPath, 'utf8'));
 
-        const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
-        console.log('indexData ', indexData.length);
+        // const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
+        // console.log('indexData ', indexData.length);
         // for (const theme in indexData) {
         //     this.puzzlesIndex.set(theme, indexData[theme]);
         // }
