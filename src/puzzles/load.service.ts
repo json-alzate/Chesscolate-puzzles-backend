@@ -22,10 +22,10 @@ export class LoadService implements OnModuleInit {
 
     async onModuleInit() {
         // Ruta del archivo .zip
-        const zipFilePath = join(__dirname, '/puzzlesdata');
+        const zipFilePath = join('/puzzlesdata/puzzles_folder.zip');
         // Directorio donde descomprimir
-        const extractPath = join(__dirname, '/puzzlesdata');
-        console.log('__dirname v2', __dirname);
+        const extractPath = join('/puzzlesdata');
+        console.log('__dirname v2 fix', zipFilePath, extractPath);
         createReadStream(zipFilePath)
             .pipe(unzipper.Extract({ path: extractPath }))
             .on('finish', () => console.log('Descompresión completada.'))
