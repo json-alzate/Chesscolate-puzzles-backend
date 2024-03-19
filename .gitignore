@@ -6,6 +6,7 @@
 
 mongo/
 .env
+puzzlesfiles/
 
 # Logs
 logs
