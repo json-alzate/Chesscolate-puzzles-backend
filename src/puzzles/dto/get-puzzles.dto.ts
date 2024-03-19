@@ -2,7 +2,7 @@ import { IsArray, IsIn, IsInt, IsOptional, IsString, Min, Max } from 'class-vali
 
 export class GetPuzzlesDto {
     @IsString()
-    elo?: string;
+    elo: string;
 
 
     @IsString()
