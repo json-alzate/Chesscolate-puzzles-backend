@@ -4,9 +4,6 @@ import { join } from 'path';
 
 import { Puzzle } from './entities/puzzle.entity';
 
-import * as unzipper from 'unzipper';
-
-
 
 interface PuzzleInfo {
     eloRange: string;
@@ -21,17 +18,6 @@ export class LoadService implements OnModuleInit {
     private puzzleOpeningsCache = new Map<string, any[]>(); // Añade caché para puzzles
 
     async onModuleInit() {
-
-        // // descomprimir zip de puzzles
-        // // Ruta del archivo .zip
-        // const zipFilePath = join('/puzzlesdata/storage/puzzles_folder.zip');
-        // // Directorio donde descomprimir
-        // const extractPath = join('/puzzlesdata/storage/');
-        // console.log('__dirname v2 fix', zipFilePath, extractPath);
-        // createReadStream(zipFilePath)
-        //     .pipe(unzipper.Extract({ path: extractPath }))
-        //     .on('finish', () => console.log('Descompresión completada.'))
-        //     .on('error', (err) => console.error('Error al descomprimir:', err));
 
 
         // listar archivos en un directorio
@@ -53,7 +39,7 @@ export class LoadService implements OnModuleInit {
 
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesThemes/index.json');
         if (process.env.PUZZLES_PATH) {
-            indexPath = join('/puzzlesdata/storage/puzzlesFilesThemes/index.json');
+            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesThemes/index.json');
         }
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
         for (const theme in indexData) {
@@ -65,7 +51,7 @@ export class LoadService implements OnModuleInit {
 
         let indexPath = join(__dirname, '../../puzzlesfiles', '/puzzlesFilesOpenings/index.json');
         if (process.env.PUZZLES_PATH) {
-            indexPath = join('/puzzlesdata/storage/puzzlesFilesOpenings/index.json');
+            indexPath = join(process.env.PUZZLES_PATH, '/puzzlesFilesOpenings/index.json');
         }
 
         const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));

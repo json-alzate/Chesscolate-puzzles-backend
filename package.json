@@ -31,10 +31,8 @@
     "class-validator": "^0.14.1",
     "csv-parser": "^3.0.0",
     "mongoose": "^8.2.1",
-    "redis": "^4.6.13",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1",
-    "unzipper": "^0.10.14"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

@@ -2,7 +2,10 @@ import { IsArray, IsIn, IsInt, IsOptional, IsString, Min, Max } from 'class-vali
 
 export class GetPuzzlesDto {
     @IsInt()
-    elo: number;
+    @Min(400)
+    @Max(2800)
+    @IsOptional()
+    elo?: number;
 
 
     @IsString()
@@ -19,6 +22,9 @@ export class GetPuzzlesDto {
     @IsOptional()
     color?: 'w' | 'b' | 'N/A';
 
+    @IsInt()
+    @Min(1)
+    @Max(200)
     @IsOptional()
     countToReturn?: number;
 }

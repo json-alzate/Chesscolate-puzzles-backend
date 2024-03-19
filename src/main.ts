@@ -9,10 +9,12 @@ async function bootstrap() {
     whitelist: true,
     forbidNonWhitelisted: true,
   }));
-  app.enableCors();
-  await app.listen(process.env.PORT || 3000);
+  app.enableCors({
+    origin: 'https://chesscolate.com',
+  });
 
-  const url = await app.getUrl();
+  await app.listen(process.env.PORT || 3000);
+  // const url = await app.getUrl();
   // console.log(`Aplicación corriendo en: ${url}`);
 }
 bootstrap();
