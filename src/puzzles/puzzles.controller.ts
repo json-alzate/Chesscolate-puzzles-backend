@@ -17,7 +17,14 @@ export class PuzzlesController {
 
   @Get('/get-puzzles')
   async getPuzzles(@Query() getPuzzlesDto: GetPuzzlesDto) {
-    const elo = getPuzzlesDto.elo >= 400 && getPuzzlesDto.elo <= 2800 ? getPuzzlesDto.elo : 1500;
+
+    console.log(getPuzzlesDto);
+
+
+    // convert elo to number
+    const eloIn = getPuzzlesDto.elo ? parseInt(getPuzzlesDto.elo) : 1500;
+
+    const elo = eloIn >= 400 && eloIn <= 2800 ? eloIn : 1500;
     const countToReturn = getPuzzlesDto.countToReturn && getPuzzlesDto.countToReturn <= 200 ? getPuzzlesDto.countToReturn : 200;
 
     return this.puzzlesService.getPuzzles(

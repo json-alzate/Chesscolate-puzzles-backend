@@ -39,11 +39,14 @@ export class PuzzlesService {
       countToReturn = 200;
     }
 
+    console.log('options ', options);
 
     let puzzles: Puzzle[] = [];
 
 
     if (options?.openingFamily && options?.openingFamily.length > 0) {
+      console.log('buscando puzzles por apertura');
+
       puzzles = await this.loadService.findPuzzlesByOpening(
         options.openingFamily,
         elo || 1500, options.color || 'N/A', countToReturn);
@@ -54,6 +57,8 @@ export class PuzzlesService {
         options.theme || this.themes[Math.floor(Math.random() * this.themes.length)],
         elo || 1500, options.color || 'N/A', countToReturn);
     }
+    console.log(puzzles.length, 'puzzles encontrados');
+
 
     // se mezclan los puzzles
     return this.shuffleArray(puzzles).slice(0, countToReturn);

@@ -71,12 +71,22 @@ export class LoadService implements OnModuleInit {
             return elo <= eloEnd;
         });
 
+        // console.log(themeInfo[index]);
+
+
 
         // Cargar puzzles avanzando hacia rangos de ELO superiores
         while (puzzles.length < totalPuzzlesNeeded && index < themeInfo.length) {
+
             puzzles = this.loadAndCachePuzzlesThemes(themeInfo[index], theme, puzzles);
+
             if (color === 'w' || color === 'b') {
-                puzzles = puzzles.filter(puzzle => puzzle.color === color);
+                puzzles = puzzles.filter(puzzle => {
+                    const fenParts = puzzle.fen.split(' ');
+                    const puzzleColor = fenParts[1];
+                    return puzzleColor === color;
+                });
+
             }
             index++;
         }
@@ -90,7 +100,11 @@ export class LoadService implements OnModuleInit {
         while (puzzles.length < totalPuzzlesNeeded && index >= 0) {
             puzzles = this.loadAndCachePuzzlesThemes(themeInfo[index], theme, puzzles, true); // Prepend para mantener orden
             if (color === 'w' || color === 'b') {
-                puzzles = puzzles.filter(puzzle => puzzle.color === color);
+                puzzles = puzzles.filter(puzzle => {
+                    const fenParts = puzzle.fen.split(' ');
+                    const puzzleColor = fenParts[1];
+                    return puzzleColor === color;
+                });
             }
             index--;
         }
@@ -114,7 +128,11 @@ export class LoadService implements OnModuleInit {
         while (puzzles.length < totalPuzzlesNeeded && index < openingInfo.length) {
             puzzles = this.loadAndCachePuzzlesOpenings(openingInfo[index], opening, puzzles);
             if (color === 'w' || color === 'b') {
-                puzzles = puzzles.filter(puzzle => puzzle.color === color);
+                puzzles = puzzles.filter(puzzle => {
+                    const fenParts = puzzle.fen.split(' ');
+                    const puzzleColor = fenParts[1];
+                    return puzzleColor === color;
+                });
             }
             index++;
         }
@@ -128,7 +146,11 @@ export class LoadService implements OnModuleInit {
         while (puzzles.length < totalPuzzlesNeeded && index >= 0) {
             puzzles = this.loadAndCachePuzzlesOpenings(openingInfo[index], opening, puzzles, true); // Prepend para mantener orden
             if (color === 'w' || color === 'b') {
-                puzzles = puzzles.filter(puzzle => puzzle.color === color);
+                puzzles = puzzles.filter(puzzle => {
+                    const fenParts = puzzle.fen.split(' ');
+                    const puzzleColor = fenParts[1];
+                    return puzzleColor === color;
+                });
             }
             index--;
         }
@@ -150,6 +172,7 @@ export class LoadService implements OnModuleInit {
                 puzzlesPath = join(process.env.PUZZLES_PATH, `/puzzlesFilesThemes/${theme}/${info.fileName}`);
             }
             puzzlesData = JSON.parse(readFileSync(puzzlesPath, 'utf8'));
+
             this.puzzleThemesCache.set(cacheKey, puzzlesData); // Carga perezosa y almacenamiento en caché
         }
 
