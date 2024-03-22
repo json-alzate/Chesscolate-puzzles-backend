@@ -10,7 +10,7 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
   }));
   app.enableCors({
-    origin: 'https://chesscolate.com',
+    origin: ['https://chesscolate.com', 'https://www.chesscolate.com'],
   });
 
   await app.listen(process.env.PORT || 3000);
