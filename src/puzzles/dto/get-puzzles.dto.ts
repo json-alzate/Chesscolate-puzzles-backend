@@ -21,9 +21,7 @@ export class GetPuzzlesDto {
     @IsOptional()
     color?: 'w' | 'b' | 'N/A';
 
-    @IsInt()
-    @Min(1)
-    @Max(200)
+    @IsString()
     @IsOptional()
     countToReturn?: number;
 }

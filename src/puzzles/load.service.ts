@@ -166,13 +166,14 @@ export class LoadService implements OnModuleInit {
 
         if (this.puzzleThemesCache.has(cacheKey)) {
             puzzlesData = this.puzzleThemesCache.get(cacheKey);
+            puzzlesData = this.shuffleArray(puzzlesData);
         } else {
             let puzzlesPath = join(__dirname, '../../puzzlesfiles', `/puzzlesFilesThemes/${theme}/${info.fileName}`);
             if (process.env.PUZZLES_PATH) {
                 puzzlesPath = join(process.env.PUZZLES_PATH, `/puzzlesFilesThemes/${theme}/${info.fileName}`);
             }
             puzzlesData = JSON.parse(readFileSync(puzzlesPath, 'utf8'));
-
+            puzzlesData = this.shuffleArray(puzzlesData);
             this.puzzleThemesCache.set(cacheKey, puzzlesData); // Carga perezosa y almacenamiento en caché
         }
 
@@ -185,15 +186,25 @@ export class LoadService implements OnModuleInit {
 
         if (this.puzzleOpeningsCache.has(cacheKey)) {
             puzzlesData = this.puzzleOpeningsCache.get(cacheKey);
+            puzzlesData = this.shuffleArray(puzzlesData);
         } else {
             let puzzlesPath = join(__dirname, '../../puzzlesfiles', `/puzzlesFilesOpenings/${opening}/${info.fileName}`);
             if (process.env.PUZZLES_PATH) {
                 puzzlesPath = join(process.env.PUZZLES_PATH, `/puzzlesFilesOpenings/${opening}/${info.fileName}`);
             }
             puzzlesData = JSON.parse(readFileSync(puzzlesPath, 'utf8'));
+            puzzlesData = this.shuffleArray(puzzlesData);
             this.puzzleOpeningsCache.set(cacheKey, puzzlesData); // Carga perezosa y almacenamiento en caché
         }
 
         return prepend ? puzzlesData.concat(existingPuzzles) : existingPuzzles.concat(puzzlesData);
+    }
+
+    private shuffleArray(array: Puzzle[]): Puzzle[] {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1)); // selecciona un índice aleatorio desde 0 hasta i
+            [array[i], array[j]] = [array[j], array[i]]; // intercambia elementos array[i] y array[j]
+        }
+        return array;
     }
 }

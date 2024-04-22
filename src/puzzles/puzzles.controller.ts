@@ -25,7 +25,7 @@ export class PuzzlesController {
     const eloIn = getPuzzlesDto.elo ? parseInt(getPuzzlesDto.elo) : 1500;
 
     const elo = eloIn >= 400 && eloIn <= 2800 ? eloIn : 1500;
-    const countToReturn = getPuzzlesDto.countToReturn && getPuzzlesDto.countToReturn <= 200 ? getPuzzlesDto.countToReturn : 200;
+    const countToReturn = getPuzzlesDto.countToReturn && Number(getPuzzlesDto.countToReturn) <= 200 ? Number(getPuzzlesDto.countToReturn) : 200;
 
     return this.puzzlesService.getPuzzles(
       elo,
