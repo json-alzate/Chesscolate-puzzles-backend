@@ -1,73 +1,50 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Required Installations
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+- **NestJS**
+- **Mongoose**
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Initial Configuration
 
-## Description
+1. Comment out the line that enables CORS in the production server to allow local consumption in the file `src/main.ts`:
+    ```typescript
+    // Comment this line:
+    origin: ['https://chesscolate.com', 'https://www.chesscolate.com'],
+    ```
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# Generating Puzzle Files from Lichess .csv
 
-## Installation
+### Step 1: Load Puzzles into MongoDB
 
-```bash
-$ npm install
-```
+1. Place the `.csv` file in the `assets` folder with the name `puzzles_upload.csv`.
+2. Uncomment the `uploadPuzzles` method in the service `puzzles.service.ts` and the necessary imports.
+3. Uncomment the necessary imports and configurations to initialize the Mongoose module in `src/puzzles/puzzles.module.ts`.
+4. Uncomment the Mongoose imports in `app.module.ts`.
+5. Create a `.env` file at the root of the project with the MongoDB connection string:
+    ```env
+    MONGO_URI=mongodb://localhost:27017/puzzles-db
+    ```
+6. Start the project with the command:
+    ```bash
+    npm run start:dev
+    ```
+7. Use Postman to send a POST request to the endpoint:
+    ```plaintext
+    http://[::1]:3000/puzzles/upload
+    ```
+    This will start uploading the puzzles to the MongoDB database. The console will notify when the process is complete.
 
-## Running the app
+### Step 2: Generate Puzzle Files by Themes and Openings
 
-```bash
-# development
-$ npm run start
+1. In the controller `src/puzzles/puzzles.controller.ts`, uncomment the `writeThemes` and `writeOpenings` methods.
+2. In the service `src/puzzles/puzzles.service.ts`, enable the correct return for the `getPuzzlesByThemeFromDB` and `getPuzzlesByOpeningFromDB` methods.
+3. Start the file generation process by sending POST requests to the following endpoints:
+    - To generate files by themes:
+      ```plaintext
+      http://[::1]:3000/puzzles/write-themes
+      ```
+    - To generate files by openings:
+      ```plaintext
+      http://[::1]:3000/puzzles/write-openings
+      ```
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+---
